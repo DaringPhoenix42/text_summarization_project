@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Text Summarizer</title>
+    <!-- Google Fonts --> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+    <style>
+        /* Enhanced Color Variables */
+        :root {
+            /* Typography */
+            --font-primary: 'Roboto', sans-serif;
+            --font-secondary: 'Inter', sans-serif;
+
+            /* Transition & Animations */
+            --transition-speed: 0.3s;
+            --border-radius: 12px;
+            --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+
+            /* Light Theme Colors */
+            --light-bg-color: #f4f6f9;
+            --light-header-bg: #ffffff;
+            --light-container-bg: #ffffff;
+            --light-text-primary: #1a2b3c;
+            --light-text-secondary: #4a5568;
+            --light-primary: #3b82f6;
+            --light-primary-hover: #2563eb;
+            --light-accent: #10b981;
+
+            /* Dark Theme Colors */
+            --dark-bg-color: #121826;
+            --dark-header-bg: #1e293b;
+            --dark-container-bg: #1e293b;
+            --dark-text-primary: #e2e8f0;
+            --dark-text-secondary: #cbd5e1;
+            --dark-primary: #60a5fa;
+            --dark-primary-hover: #3b82f6;
+            --dark-accent: #34d399;
+        }
+
+        /* Base Reset & Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all var(--transition-speed) ease;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--light-bg-color);
+            color: var(--light-text-primary);
+        }
+
+        body.dark-theme {
+            background-color: var(--dark-bg-color);
+            color: var(--dark-text-primary);
+        }
+
+        /* Header Styling */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background-color: var(--light-header-bg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        body.dark-theme header {
+            background-color: var(--dark-header-bg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--light-primary);
+        }
+        body.dark-theme .logo {
+            color: var(--dark-primary);
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--light-text-secondary);
+            transition: transform 0.2s, color 0.3s;
+        }
+        body.dark-theme .theme-toggle-btn {
+            color: var(--dark-text-secondary);
+        }
+        .theme-toggle-btn:hover {
+            transform: rotate(15deg);
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 900px; /* Increased for a wider container */
+            margin: 3rem auto; /* More vertical space */
+            padding: 3rem;     /* Increased padding inside the box */
+            background-color: var(--light-container-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        body.dark-theme .container {
+            background-color: var(--dark-container-bg);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .subtext {
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            color: var(--light-text-secondary);
+        }
+        body.dark-theme .subtext {
+            color: var(--dark-text-secondary);
+        }
+
+        /* Form Styles */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            font-family: var(--font-secondary);
+            resize: vertical;
+            font-size: 1rem;
+        }
+        body.dark-theme textarea {
+            background-color: #2d3748;
+            border-color: #4a5568;
+            color: var(--dark-text-primary);
+        }
+
+        .btn-summarize {
+            display: inline-block;
+            padding: 0.9rem 2rem;
+            background-color: var(--light-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .btn-summarize:hover {
+            background-color: var(--light-primary-hover);
+            transform: translateY(-2px);
+        }
+        body.dark-theme .btn-summarize {
+            background-color: var(--dark-primary);
+        }
+        body.dark-theme .btn-summarize:hover {
+            background-color: var(--dark-primary-hover);
+        }
+
+        /* Result & Error Styling */
+        .result, .error {
+            margin-top: 1.5rem;
+            padding: 1.2rem;
+            border-radius: var(--border-radius);
+        }
+        .result {
+            background-color: #d1fae5;
+            color: #064e3b;
+        }
+        .error {
+            background-color: #fee2e2;
+            color: #7f1d1d;
+        }
+        body.dark-theme .result {
+            background-color: #064e3b;
+            color: #d1fae5;
+        }
+        body.dark-theme .error {
+            background-color: #7f1d1d;
+            color: #fee2e2;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+            font-size: 0.9rem;
+            color: var(--light-text-secondary);
+        }
+        body.dark-theme footer {
+            color: var(--dark-text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">TextSync</div>
+        <button class="theme-toggle-btn" aria-label="Toggle Theme">
+            <i class="fas fa-adjust" id="theme-icon"></i>
+        </button>
+    </header>
+
+    <div class="container">
+        <h1>Text Summarization</h1>
+        <p class="subtext">Generate concise summaries instantly</p>
+
+        <form>
+            <textarea placeholder="Paste your text here..."></textarea>
+            <button type="button" class="btn-summarize">Summarize</button>
+        </form>
+
+        <div class="result" style="display: none;">
+            <h2>Summary</h2>
+            <p id="summary-text"></p>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 TextSync | Intelligent Text Summarization</p>
+    </footer>
+
+    <script>
+        const body = document.body;
+        const themeToggleBtn = document.querySelector('.theme-toggle-btn');
+        const themeIcon = document.getElementById('theme-icon');
+        const summarizeBtn = document.querySelector('.btn-summarize');
+        const textarea = document.querySelector('textarea');
+        const resultContainer = document.querySelector('.result');
+        const summaryText = document.getElementById('summary-text');
+
+        // Theme Toggle Logic
+        themeToggleBtn.addEventListener('click', () => {
+            body.classList.toggle('dark-theme');
+            
+            // Update icon based on theme
+            themeIcon.classList.toggle('fa-sun');
+            themeIcon.classList.toggle('fa-moon');
+        });
+
+        // Simple Summarization (mock implementation)
+        summarizeBtn.addEventListener('click', () => {
+            const text = textarea.value.trim();
+            
+            if (text) {
+                // Basic summarization logic (replace with actual algorithm)
+                const words = text.split(/\s+/);
+                const summary = words.slice(0, Math.min(30, words.length)).join(' ') + '...';
+                
+                summaryText.textContent = summary;
+                resultContainer.style.display = 'block';
+            } else {
+                alert('Please enter some text to summarize.');
+            }
+        });
+
+        // Optional: Persist theme preference in localStorage
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-theme');
+            themeIcon.classList.replace('fa-adjust', 'fa-moon');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            const isDarkMode = body.classList.contains('dark-theme');
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        });
+    </script>
+</body>
+</html>
